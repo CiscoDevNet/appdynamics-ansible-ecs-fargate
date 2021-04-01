@@ -1,8 +1,8 @@
 # Getting Started
 
-General information about installing Ansible and setting up your environment, and more can be found in the )Installing Ansible Guide)(https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+General information about installing Ansible and setting up your environment, and more can be found in the [Installing Ansible Guide](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 
-Information about boto library usage and more about Amazon Web Services modules can be found in the )Ansible AWS Guidelines documentation)(https://docs.ansible.com/ansible/latest/scenario_guides/guide_aws.html).
+Information about boto library usage and more about Amazon Web Services modules can be found in the [Ansible AWS Guidelines documentation](https://docs.ansible.com/ansible/latest/scenario_guides/guide_aws.html).
 
 ## AWS Collections Dependencies
 
