@@ -1,0 +1,9 @@
+- name: Get route table info
+  community.aws.ec2_vpc_route_table_info:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    filters:
+      "tag:Name": "{{ aws_vpc_name }}-RouteTable"
+      vpc-id: "{{ item.vpc_id | default(vpc_id) }}"
+  register: aws_route_table_info

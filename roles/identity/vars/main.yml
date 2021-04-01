@@ -1,0 +1,9 @@
+---
+# vars file for identity
+create_policies: false
+remove_policies: false
+
+aws_iam_name: my-task
+
+create_ecs_ansible_user: false
+remove_ecs_ansible_user: false

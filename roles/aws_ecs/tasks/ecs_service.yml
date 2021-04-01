@@ -1,0 +1,46 @@
+- name: Create ECS service
+  community.aws.ecs_service:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ task_definition_name }}-Service"
+    cluster: "{{ aws_cluster.cluster.clusterArn }}"
+    task_definition: "{{ aws_task_definition.taskdefinition.taskDefinitionArn }}"
+    desired_count: 1
+    network_configuration:
+      assign_public_ip: yes
+      security_groups: "{{ aws_security_group.group_id }}"
+      subnets:
+        - "{{ aws_vpc_subnet.subnet.id }}"
+    launch_type: FARGATE
+    state: present
+  register: aws_ecs_service
+  when: create_ecs_service == true
+
+- name: Scale ECS service down (when present)
+  community.aws.ecs_service:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ task_definition_name }}-Service"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ aws_task_definition_info.task_definition_arn | default(task_definition_arn) }}"
+    desired_count: 0 # works with state: present
+    state: present # "{{ 'present' if active == 'y' else 'absent' }}"
+  when: remove_ecs_service == true
+  ignore_errors: True # ignore errors when true state is absent
+
+- name: Pause for 3 seconds to scale down service
+  pause:
+    seconds: "3"
+  when: remove_ecs_service == true 
+
+- name: Delete ECS service
+  community.aws.ecs_service:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ task_definition_name }}-Service"
+  when: remove_ecs_service == true

@@ -1,0 +1,31 @@
+- name: Create security group
+  amazon.aws.ec2_group:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_networking_name }}-SecurityGroup"
+    description: Opening application ports
+    vpc_id: "{{ aws_vpc.vpc.id }}"
+    rules:
+      - proto: all
+        from_port: "{{ application_port }}"
+        to_port: "{{ application_port }}"
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow all on port
+    rules_egress:
+      - proto: all
+        from_port: -1
+        to_port: -1
+        cidr_ip: 0.0.0.0/0
+        group_desc: allow all egress
+  register: aws_security_group
+  when: create_vpc == true
+
+- name: Delete security group
+  amazon.aws.ec2_group:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    group_id: "{{ item.group_id | default(security_group_id) }}"
+    state: absent
+  when: remove_vpc == true

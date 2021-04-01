@@ -1,0 +1,5 @@
+---
+# vars file for logs
+create_log_group: false
+remove_log_group: false
+log_group_name: /ecs/test-cluster-ansible

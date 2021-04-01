@@ -1,0 +1,76 @@
+- name: Create task definition
+  community.aws.ecs_taskdefinition:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    family: "{{ task_definition_name }}"
+    containers:
+    - name: agent-init
+      essential: false
+      image: "{{ agent_image }}"
+      memory: 128
+      mountPoints:
+      - containerPath: /opt/appdynamics
+        sourceVolume: appd-agent-volume
+    - name: ansible-app
+      essential: true
+      image: "{{ application_image }}"
+      memory: 896
+      portMappings:
+      - containerPort: "{{ application_port }}"
+        hostPort:      "{{ application_port }}"
+      logConfiguration:
+        logDriver: awslogs
+        options:
+          awslogs-group: "{{ aws_log_group.log_group_name }}"
+          awslogs-region: "{{ aws_region }}"
+          awslogs-stream-prefix: ecs
+      environment:
+        - name: "APPDYNAMICS_CONTROLLER_HOST_NAME"
+          value: "{{ controller_host_name }}"
+        - name: "APPDYNAMICS_CONTROLLER_PORT"
+          value: "{{ controller_port }}"
+        - name: "APPDYNAMICS_CONTROLLER_SSL_ENABLED"
+          value: "{{ controller_ssl_enabled }}"
+        - name: "APPDYNAMICS_AGENT_ACCOUNT_NAME"
+          value: "{{ controller_account_name }}"
+        - name: "APPDYNAMICS_AGENT_APPLICATION_NAME"
+          value: "{{ appd_application_name }}"
+        - name: "APPDYNAMICS_AGENT_TIER_NAME"
+          value: "{{ appd_tier_name }}"
+        - name: "APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME"
+          value: "true"
+        - name: "APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX"
+          value: "{{ appd_node_name | default(appd_tier_name) }}"
+        - name: "JAVA_OPTS"
+          value: " -javaagent:/opt/appdynamics/javaagent.jar "
+      secrets:
+        # For variables stored in Secrets Manager
+        - name: "APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
+          valueFrom: "{{ aws_secret.secret.arn }}"
+      entryPoint:
+      - /bin/sh
+      - -c
+      - java $JAVA_OPTS -jar /java-services.jar
+      volumesFrom:
+      - sourceContainer: agent-init
+    volumes:
+    - name: appd-agent-volume
+    cpu: 512
+    memory: 1024
+    state: present
+    network_mode: awsvpc
+    launch_type: FARGATE
+    task_role_arn: "{{ aws_task_role.role_result.arn }}"
+    execution_role_arn: "{{ aws_execution_role.arn }}"
+  register: aws_task_definition
+  when: create_task_definition == true
+
+- name: Delete task definition
+  community.aws.ecs_taskdefinition:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    arn: "{{ aws_task_definition_info.task_definition_arn }}"
+    state: absent
+  when: remove_task_definition == true

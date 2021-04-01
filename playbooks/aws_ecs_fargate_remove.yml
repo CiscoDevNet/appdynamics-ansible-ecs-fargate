@@ -1,0 +1,67 @@
+---
+- hosts: all
+  tasks:
+    - name: Include variables for the controller settings
+      include_vars: vars/.local.controller.yml
+
+    - name: Include variables for the agent settings
+      include_vars: vars/.local.agent.yml
+
+    - name: Include cloud provider settings
+      include_vars: vars/.local.cloud-provider.yml
+
+    - name: Ensure botocore and boto3 modules are installed
+      pip:
+        name: [ "boto3", "botocore"]
+        extra_args: "--user"
+
+    - include_role:
+        name: aws_ecs
+      vars:
+        create_cluster: false
+        remove_cluster: true
+        ecs_cluster_name: test-ansible-cluster
+
+        create_task_definition: false
+        remove_task_definition: true
+        task_definition_name: my-task
+        application_type: java # java | dotnet | node
+        application_image: sashaz/java-services:v5
+        agent_image: appdynamics/java-agent:20.8.0
+
+        create_ecs_service: false
+        remove_ecs_service: true
+    
+    - include_role:
+        name: networking
+      vars:
+        create_vpc: false
+        remove_vpc: true
+        aws_vpc_name: "VPC for AppDynamics"
+        aws_vpc_cidr_block: 10.10.0.0/16
+        aws_networking_name: my-task
+
+    - include_role:
+        name: identity
+      vars:
+        create_policies: false
+        remove_policies: true
+        aws_iam_name: my-task
+
+    - include_role:
+        name: secrets 
+      vars:
+        create_secret: false
+        remove_secret: true
+        aws_secret_name: test-secret-name
+
+    - include_role:
+        name: logs
+      vars:
+        create_log_group: false
+        remove_log_group: true
+        log_group_name: /ecs/test-cluster-ansible
+
+    
+
+

@@ -1,0 +1,28 @@
+---
+- hosts: all
+  tasks:
+    - name: Include variables for the controller settings
+      include_vars: vars/.local.controller.yml
+
+    - name: Include variables for the agent settings
+      include_vars: vars/.local.agent.yml
+
+    - name: Include cloud provider settings
+      include_vars: vars/.local.cloud-provider.yml
+
+    - name: Ensure botocore and boto3 modules are installed
+      pip:
+        name: [ "boto3", "botocore"]
+        extra_args: "--user"
+
+    - include_role:
+        name: identity
+      vars:
+        create_policies: false
+        remove_policies: false
+        aws_iam_name: my-task
+        create_ecs_ansible_user: false
+        remove_ecs_ansible_user: true
+
+
+

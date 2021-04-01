@@ -1,0 +1,17 @@
+---
+# vars file for aws
+
+create_cluster: false
+remove_cluster: false
+ecs_cluster_name: test-ansible-cluster
+
+create_task_definition: false
+remove_task_definition: false
+task_definition_name: test-task-ansible
+application_type: java # java | dotnet | node
+application_image: sashaz/java-services:v5
+application_port: 8080
+agent_image: appdynamics/java-agent:20.8.0
+
+create_ecs_service: false
+remove_ecs_service: false

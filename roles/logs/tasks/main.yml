@@ -1,0 +1,9 @@
+---
+# tasks file for logs
+- include_tasks: aws_log_group.yml
+  when: create_log_group == true or remove_log_group == true
+
+- name: Print log group info
+  debug:
+    msg: "The log group created is '{{ aws_log_group.arn }}'" # aws_log_group.arn
+  when: create_log_group == true

@@ -1,0 +1,28 @@
+---
+# App owners would either need to chown the entire agent folder to their app's user OR grant their app's user read/write access to the agent folder
+- name: Create route table
+  community.aws.ec2_vpc_route_table:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    vpc_id: "{{ aws_vpc.vpc.id }}"
+    tags:
+      Name: "{{ aws_vpc_name }}-RouteTable"
+    subnets:
+      - "{{ aws_vpc_subnet.subnet.id }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ aws_vpc_igw.gateway_id }}"
+    state: present
+  when: create_vpc == true
+  register: aws_vpc_route_table
+
+- name: Delete route table 
+  community.aws.ec2_vpc_route_table:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    route_table_id: "{{ item.id }}"
+    lookup: id
+    state: absent
+  when: remove_vpc == true

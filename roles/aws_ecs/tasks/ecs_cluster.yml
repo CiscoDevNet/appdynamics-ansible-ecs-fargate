@@ -1,0 +1,20 @@
+# Create
+- name: Cluster creation
+  community.aws.ecs_cluster:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ ecs_cluster_name }}"
+    state: present
+  when: create_cluster == true
+  register: aws_cluster
+
+# Remove
+- name: Cluster deletion
+  community.aws.ecs_cluster:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ ecs_cluster_name }}"
+    state: absent
+  when: remove_cluster == true

@@ -1,0 +1,143 @@
+---
+# tasks file for networking
+## Create
+# create VPC
+- include_tasks: aws_vpc.yml
+  when: create_vpc == true
+
+- name: Print network info
+  debug:
+    msg: "The vpc created is '{{ aws_vpc.vpc.id }}'"
+  when: create_vpc == true
+
+# create internet gateway
+- include_tasks: aws_vpc_igw.yml
+  when: create_vpc == true
+
+- name: Print internet gateway info
+  debug:
+    msg: "The vpc igw created is '{{ aws_vpc_igw.gateway_id }}'"
+  when: create_vpc == true
+
+# create VPC subnet
+- include_tasks: aws_vpc_subnet.yml
+  when: create_vpc == true
+
+- name: Print subnet info
+  debug:
+    msg: "The vpc subnet created is '{{ aws_vpc_subnet.subnet.id }}'"
+  when: create_vpc == true
+
+# create route table
+- include_tasks: aws_vpc_route_table.yml
+  when: create_vpc == true
+
+- name: Print route table info
+  debug:
+    msg: "The vpc route table created is '{{ aws_vpc_route_table.route_table.id }}'"
+  when: create_vpc == true
+
+# create security group
+- include_tasks: aws_security_group.yml
+  when: create_vpc == true
+
+- name: Print security group info
+  debug:
+    msg: "The security group created is '{{ aws_security_group.group_id }}'"
+  when: create_vpc == true
+
+## Remove
+# get vpc info
+- include_tasks: aws_vpc_info.yml
+  when: remove_vpc == true
+
+# get route table info
+- include_tasks: aws_vpc_route_table_info.yml
+  with_items: 
+    - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true
+
+- name: Print route table info
+  debug:
+    msg: "The route table (s) to delete '{{ item }}'"
+  with_items: 
+    - "{{ aws_route_table_info.route_tables }}"
+  when: remove_vpc == true
+
+# remove route table
+- include_tasks: aws_vpc_route_table.yml
+  with_items: 
+    - "{{ aws_route_table_info.route_tables }}"
+  when: remove_vpc == true
+
+# get igw info
+- include_tasks: aws_vpc_igw_info.yml
+  with_items: 
+      - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true and aws_vpc_info.vpcs | length > 0
+
+- name: Print internet gateway info
+  debug:
+    msg: "The igw to delete is '{{ item.internet_gateway_id }}'"
+  with_items: 
+    - "{{ aws_vpc_igw_info.internet_gateways }}"
+  when: remove_vpc == true and aws_vpc_igw_info.internet_gateways | length > 0
+
+- name: Pause for 3 seconds to delete igw
+  pause:
+    seconds: "3"
+  when: remove_vpc == true 
+
+# remove igw
+- include_tasks: aws_vpc_igw.yml
+  with_items: 
+    - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true
+
+# get security group info
+- include_tasks: aws_security_group_info.yml
+  with_items: 
+      - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true
+
+- name: Print security group info
+  debug:
+    msg: "The sg to delete is '{{ item.group_id }}'"
+  with_items: 
+    - "{{ aws_security_group_info.security_groups }}"
+  when: remove_vpc == true
+
+# remove security group
+- include_tasks: aws_security_group.yml
+  with_items: 
+    - "{{ aws_security_group_info.security_groups }}"
+  when: remove_vpc == true
+
+- name: Pause for 3 seconds to delete security group
+  pause:
+    seconds: "3"
+  when: remove_vpc == true 
+
+# remove VPC subnet
+- include_tasks: aws_vpc_subnet.yml
+  with_items: 
+    - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true
+
+# remove VPC 
+- name: Print vpc info
+  debug:
+    msg: "The vpc to delete is '{{ item.vpc_id }}'"
+  with_items: 
+    - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true
+
+- name: Pause for 3 seconds to delete vpc
+  pause:
+    seconds: "3"
+  when: remove_vpc == true 
+
+- include_tasks: aws_vpc.yml
+  with_items: 
+    - "{{ aws_vpc_info.vpcs }}"
+  when: remove_vpc == true

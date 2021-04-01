@@ -1,0 +1,11 @@
+---
+# App owners would either need to chown the entire agent folder to their app's user OR grant their app's user read/write access to the agent folder
+- name: Get igw info
+  community.aws.ec2_vpc_igw_info:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    filters:
+        "tag:Name": "{{ aws_vpc_name }}-IGW"
+        attachment.vpc-id: "{{ item.vpc_id | default(vpc_id) }}"
+  register: aws_vpc_igw_info

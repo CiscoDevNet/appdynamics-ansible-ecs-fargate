@@ -1,0 +1,8 @@
+---
+# vars file for networking
+create_vpc: false
+remove_vpc: true
+
+aws_vpc_name: "VPC for AppDynamics"
+aws_vpc_cidr_block: 10.10.0.0/16
+aws_networking_name: my-task

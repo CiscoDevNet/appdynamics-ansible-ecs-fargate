@@ -1,0 +1,70 @@
+---
+# tasks file for aws_ecs
+## Create 
+# create cluster
+- include_tasks: ecs_cluster.yml
+  when: create_cluster == true
+
+- name: Print cluster info
+  debug:
+    msg: "The cluster created is '{{ aws_cluster.cluster.clusterArn }}'"
+  when: create_cluster == true 
+
+# create task definition
+- include_tasks: ecs_task_definition.yml
+  when: create_task_definition == true
+
+- name: Print task definition info
+  debug:
+    msg: "The task definition created is '{{ aws_task_definition.taskdefinition.taskDefinitionArn }}'"
+  when: create_task_definition == true 
+
+# create cluster service
+- include_tasks: ecs_service.yml
+  when: create_ecs_service == true
+
+- name: Print service info
+  debug:
+    msg: "The service created is '{{ aws_ecs_service.service.serviceArn }}'"
+  when: create_ecs_service == true 
+
+## Remove
+# get task definition info
+- include_tasks: ecs_task_definition_info.yml
+  when: remove_task_definition == true
+
+- name: Print task definition info
+  debug:
+    msg: "The task definition to delete is '{{ aws_task_definition_info.task_definition_arn }}'"
+  when: remove_task_definition == true 
+
+# get cluster service info
+- include_tasks: ecs_service_info.yml
+  when: remove_task_definition == true
+
+- name: Print cluster service info
+  debug:
+    msg: "The cluster service to delete is '{{ aws_ecs_service_info.services | first }}'"
+  when: remove_ecs_service == true and aws_ecs_service_info.services | length > 0
+
+# remove service
+- include_tasks: ecs_service.yml
+  when: remove_ecs_service == true
+
+- name: Pause for 3 seconds to delete service
+  pause:
+    seconds: "3"
+  when: remove_cluster == true 
+
+# remove cluster
+- name: Print cluster info
+  debug:
+    msg: "The cluster to delete is '{{ ecs_cluster_name }}'"
+  when: remove_cluster == true 
+
+- include_tasks: ecs_cluster.yml
+  when: remove_cluster == true
+
+# remove task definition
+- include_tasks: ecs_task_definition.yml
+  when: remove_task_definition == true

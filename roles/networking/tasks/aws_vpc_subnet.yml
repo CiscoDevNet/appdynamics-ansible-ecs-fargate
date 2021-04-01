@@ -1,0 +1,24 @@
+---
+# App owners would either need to chown the entire agent folder to their app's user OR grant their app's user read/write access to the agent folder
+- name: Create subnet for AppDynamics
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    state: present
+    vpc_id: "{{ aws_vpc.vpc.id }}" # required
+    cidr: "{{ aws_vpc_cidr_block }}" # required
+    tags:
+      app: appdynamics
+  when: create_vpc == true 
+  register: aws_vpc_subnet
+
+- name: Remove subnet for AppDynamics
+  amazon.aws.ec2_vpc_subnet:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    state: absent
+    vpc_id: "{{ item.vpc_id | default(vpc_id) }}" # required
+    cidr: "{{ aws_vpc_cidr_block }}" # required
+  when: remove_vpc == true

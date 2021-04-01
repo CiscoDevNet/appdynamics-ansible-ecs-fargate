@@ -1,0 +1,8 @@
+- name: Get ECS service info
+  community.aws.ecs_service_info:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    cluster: "{{ ecs_cluster_name }}"
+    service: "{{ task_definition_name }}-Service"
+  register: aws_ecs_service_info

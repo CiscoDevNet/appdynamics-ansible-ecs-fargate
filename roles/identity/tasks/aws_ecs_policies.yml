@@ -1,0 +1,81 @@
+# Create policy to fetch secret
+- name: Create IAM Managed Policy - Get Secret Value
+  community.aws.iam_managed_policy:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    policy_name:  "{{ aws_iam_name }}-SecretsPolicy" 
+    policy:
+      Version: "2012-10-17"
+      Statement:
+      - Effect: "Allow"
+        Action: "secretsmanager:GetSecretValue"
+        Resource: "{{ aws_secret.secret.arn }}"
+    state: present
+  register: aws_secret_policy
+  when: create_policies == true
+
+# Delete policy to fetch secret
+- name: Delete IAM Managed Policy - Get Secret Value
+  community.aws.iam_managed_policy:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    policy_name:  "{{ aws_iam_name }}-SecretsPolicy" 
+    state: absent
+  when: remove_policies == true
+
+# Remove role for task definition
+- name: Remove IAM role - Execution Task
+  community.aws.iam_role:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_iam_name }}-ExecutionRole"
+    state: absent
+  when: remove_policies == true
+
+# Remove role for task definition
+- name: Create IAM role - Execution Task
+  community.aws.iam_role:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_iam_name }}-ExecutionRole"
+    state: present
+    assume_role_policy_document: "{{ lookup('file','ecs_execution_role_policy.json') }}"
+    managed_policies: 
+      - "{{ aws_secret_policy.policy.arn }}"
+      - "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  register: aws_execution_role
+  when: create_policies == true
+
+# Create role for containers
+- name: Create IAM role - Task Role
+  community.aws.iam:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    iam_type: role
+    name: "{{ aws_iam_name }}-TaskRole"
+    state: present
+    trust_policy:
+      Version: '2012-10-17'
+      Statement:
+      - Action: sts:AssumeRole
+        Effect: Allow
+        Principal:
+          Service: ecs-tasks.amazonaws.com
+  register: aws_task_role
+  when: create_policies == true
+
+# Remove role for containers
+- name: Remove IAM role - Task Role
+  community.aws.iam:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    iam_type: role
+    name: "{{ aws_iam_name }}-TaskRole"
+    state: absent
+  when: remove_policies == true

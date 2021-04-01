@@ -1,0 +1,25 @@
+---
+# App owners would either need to chown the entire agent folder to their app's user OR grant their app's user read/write access to the agent folder
+- name: Create a VPC
+  amazon.aws.ec2_vpc_net:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_vpc_name }}"
+    cidr_block: "{{ aws_vpc_cidr_block }}"
+    tags:
+      module: ec2_vpc_net #todo flexible tags
+      app: appdynamics
+    tenancy: default # for Fargate
+  when: create_vpc == true
+  register: aws_vpc
+
+- name: Delete a VPC 
+  amazon.aws.ec2_vpc_net:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_vpc_name }}"
+    cidr_block: "{{ aws_vpc_cidr_block }}"
+    state: absent
+  when: remove_vpc == true

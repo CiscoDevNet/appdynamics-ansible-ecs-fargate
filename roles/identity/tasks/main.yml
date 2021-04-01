@@ -1,0 +1,18 @@
+---
+# tasks file for identity
+- include_tasks: aws_ecs_policies.yml
+  when: create_policies == true or remove_policies == true
+
+- name: Print roles info
+  debug:
+    msg: "The execution role created is '{{ aws_execution_role.arn }}' \n 
+    The container role created is '{{ aws_task_role.role_result.arn }}'"
+  when: create_policies == true
+
+- include_tasks: aws_ecs_users.yml
+  when: create_ecs_ansible_user == true or remove_ecs_ansible_user == true
+
+- name: Print roles info
+  debug:
+    msg: "ECS Ansible user created is '{{ aws_ecs_ansible_user.iam_user.user.arn }}'"
+  when: create_ecs_ansible_user == true

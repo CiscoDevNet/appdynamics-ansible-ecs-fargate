@@ -1,0 +1,46 @@
+# Remove role user
+- name: Remove IAM user - ECS Ansible
+  community.aws.iam_user:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_iam_name }}-AnsibleUser"
+    state: absent
+  when: remove_ecs_ansible_user == true
+
+# Remove policy
+- name: Remove IAM Managed Policy
+  community.aws.iam_managed_policy:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    policy_name: "{{ aws_iam_name }}-AnsibleManagedPolicy"
+    state: absent
+  when: remove_ecs_ansible_user == true
+
+# Create Policy
+- name: Create IAM Managed Policy
+  community.aws.iam_managed_policy:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    policy_name: "{{ aws_iam_name }}-AnsibleManagedPolicy"
+    policy_description: "Ansible User permissions managed policy"
+    policy: "{{ lookup('file','ecs_ansible_user_resources_policy.json') }}"
+    state: present
+  register: aws_ecs_ansible_user_policy
+  when: create_ecs_ansible_user == true
+
+# Create user 
+- name: Create IAM user - ECS Ansible
+  community.aws.iam_user:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    aws_region: "{{ aws_region }}"
+    name: "{{ aws_iam_name }}-AnsibleUser"
+    state: present
+    managed_policies: 
+      - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+      - "{{ aws_ecs_ansible_user_policy.policy.arn }}"
+  register: aws_ecs_ansible_user
+  when: create_ecs_ansible_user == true
