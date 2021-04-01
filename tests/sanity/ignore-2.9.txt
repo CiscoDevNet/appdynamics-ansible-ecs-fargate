@@ -1,0 +1,7 @@
+README.md no-smart-quotes!skip
+roles/common/README.md no-smart-quotes!skip
+roles/identity/README.md no-smart-quotes!skip
+roles/aws_ecs/README.md no-smart-quotes!skip
+roles/logs/README.md no-smart-quotes!skip
+roles/networking/README.md no-smart-quotes!skip
+roles/secrets/README.md no-smart-quotes!skip
