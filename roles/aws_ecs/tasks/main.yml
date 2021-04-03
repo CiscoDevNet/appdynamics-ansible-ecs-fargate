@@ -17,7 +17,7 @@
 - name: Print task definition info
   debug:
     msg: "The task definition created is '{{ aws_task_definition.taskdefinition.taskDefinitionArn }}'"
-  when: create_task_definition == true 
+  when: create_task_definition == true
 
 # create cluster service
 - include_tasks: ecs_service.yml
@@ -36,7 +36,8 @@
 - name: Print task definition info
   debug:
     msg: "The task definition to delete is '{{ aws_task_definition_info.task_definition_arn }}'"
-  when: remove_task_definition == true 
+  when: remove_task_definition == true
+  ignore_errors: true
 
 # get cluster service info
 - include_tasks: ecs_service_info.yml
@@ -51,9 +52,9 @@
 - include_tasks: ecs_service.yml
   when: remove_ecs_service == true
 
-- name: Pause for 3 seconds to delete service
+- name: Pause for 5 seconds to delete service
   pause:
-    seconds: "3"
+    seconds: "5"
   when: remove_cluster == true 
 
 # remove cluster

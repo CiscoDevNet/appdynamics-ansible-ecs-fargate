@@ -83,9 +83,9 @@
     - "{{ aws_vpc_igw_info.internet_gateways }}"
   when: remove_vpc == true and aws_vpc_igw_info.internet_gateways | length > 0
 
-- name: Pause for 3 seconds to delete igw
+- name: Pause for 5 seconds to delete igw
   pause:
-    seconds: "3"
+    seconds: "5"
   when: remove_vpc == true 
 
 # remove igw
