@@ -1,0 +1,33 @@
+name: Ansible Sanity test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    # Important: This sets up your GITHUB_WORKSPACE environment variable
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install test dependencies.
+      run: pip3 install ansible docker yamllint ansible-lint
+
+    - name: Build the collection
+      run: |
+        collection_file=$(basename $(ansible-galaxy collection build -f | awk -F" " '{print $NF}'))
+        echo "COLLECTION_FILE=$collection_file" >> $GITHUB_ENV
+
+    - name: Install the collection
+      run: ansible-galaxy collection install ${{ env.COLLECTION_FILE }}
+
+    - name: Sanity test the collection
+      run: |
+          cd /home/runner/.ansible/collections/ansible_collections/appdynamics/aws
+          ansible-test sanity --docker default -v
