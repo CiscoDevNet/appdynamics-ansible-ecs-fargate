@@ -35,14 +35,14 @@ foo@bar:~$ ansible-playbook playbooks/aws_ecs_ansible_user_create.yml
 
 ### Run ECS Fargate Create Playbook
 
-Create ECS containers and
+Create ECS containers and supporting resources.
 ```console
 foo@bar:~$ ansible-playbook playbooks/aws_ecs_fargate_create.yml
 ```
 
 ## Run Playbooks to Remove Created Resources
 
-As there is no default way to “remove” or “rollback”, we re running set of playbooks to delete resources.
+As there is no default way to “remove” or “rollback”, a set of playbooks is defined to delete resources.
 
 ### Run ECS Fargate Remove Playbook
 
