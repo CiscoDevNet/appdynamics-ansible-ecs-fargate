@@ -9,9 +9,9 @@ All of the supporting resources are going to be created as well. Secrets, namely
 
 ## Prepare
 
-Start by copying playbook's `/vars` files, and adding prefix `.local.` to their name. These newly created files are ignored by version control. 
+Start by copying playbook's `/vars` files, and adding prefix `.local.` to their name. 
 
-Copy the playbook’s variables file: `playbooks/vars/cloud-provider.yml` appending `.local.` at the beginning, so it’s ignored by version control, where the true variable values should be stored.
+Copy the playbook’s variables file: `playbooks/vars/cloud-provider.yml` appending `.local.` at the beginning, so it’s ignored by version control. In this newly created file the true variable values should be stored.
 
 Similar approach is to be followed for providing controller connection, copying `playbooks/vars/controller.yml` and agent configuration from `playbooks/vars/agent.yml`.
 
@@ -23,9 +23,11 @@ After populating files prefixed with `.local.` with true variable values - proce
 
 ## Run Playbooks to Create Resources
 
-### Create AWS User 
+### Create AWS User (optional)
 
-Create a user in AWS to be used by Ansible. Use this user's access and secret key to connect to AWS from ansible (refer to content of `playbooks/vars/cloud-provider.yml`).
+Create a user in AWS to be used by Ansible. Use this user's access and secret key to connect to AWS from ansible (refer to content of `playbooks/vars/cloud-provider.yml`). 
+
+If there is already a user on AWS account that can be used for this purpose, skip this step (optional).
 
 ```console
 foo@bar:~$ ansible-playbook playbooks/aws_ecs_ansible_user_create.yml
@@ -48,7 +50,7 @@ As there is no default way to “remove” or “rollback”, we re running set 
 foo@bar:~$ ansible-playbook playbooks/aws_ecs_fargate_remove.yml
 ```
 
-### Remove AWS User 
+### Remove AWS User (optional)
 
 ```console
 foo@bar:~$ ansible-playbook playbooks/aws_ecs_ansible_user_remove.yml
