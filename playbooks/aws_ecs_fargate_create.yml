@@ -63,5 +63,3 @@
 
         create_ecs_service: true
         remove_ecs_service: false
-
-

@@ -61,7 +61,4 @@
         create_log_group: false
         remove_log_group: true
         log_group_name: /ecs/test-cluster-ansible
-
     
-
-

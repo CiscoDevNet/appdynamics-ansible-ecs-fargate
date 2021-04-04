@@ -6,7 +6,7 @@
     aws_secret_key: "{{ aws_secret_key }}"
     aws_region: "{{ aws_region }}"
     state: present
-    tags: { "Source": "ansible", "Env" : "Dev" }
+    tags: { "Source": "ansible", "Env": "Dev" }
     log_group_name: "{{ log_group_name }}"
   when: create_log_group == true
   register: aws_log_group

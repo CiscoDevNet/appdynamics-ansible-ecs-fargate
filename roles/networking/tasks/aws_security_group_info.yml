@@ -7,4 +7,3 @@
       group-name: "{{ aws_networking_name }}-SecurityGroup"
       vpc-id: "{{ item.vpc_id | default(vpc_id) }}"
   register: aws_security_group_info
-
