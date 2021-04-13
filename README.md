@@ -1,4 +1,4 @@
-> NOTE: Waiting for pull request to be completed and released to enable full functionality: https://github.com/ansible-collections/community.aws/pull/534. Although underlying Boto3 library supports `depends_on` functionality, current ansible module does not have and option to force one container execution completion (containing agent binaries) bfore other ocntainer starts (monitored application). 
+> NOTE: Waiting for pull request to be completed and released to enable full functionality: https://github.com/ansible-collections/community.aws/pull/534. Although underlying Boto3 library supports `depends_on` functionality, current ansible module does not have and option to force one container execution completion (containing agent binaries) before another container starts (monitored application). 
 
 # AppDynamics Agents in AWS ECS with Ansible
 
