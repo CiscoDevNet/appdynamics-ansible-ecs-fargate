@@ -1,3 +1,5 @@
+> NOTE: Waiting for pull request to be completed and released to enable full functionality: https://github.com/ansible-collections/community.aws/pull/534. Although underlying Boto3 library supports `depends_on` functionality, current ansible module does not have and option to force one container execution completion (containing agent binaries) bfore other ocntainer starts (monitored application). 
+
 # AppDynamics Agents in AWS ECS with Ansible
 
 AWS Elastic Container Service (ECS) Fargate is a service used to run containers without having to manage servers or clusters, by defining tasks we describe requirements for our applications running in containers. For more information on this refer to the official [AWS documentation](https://aws.amazon.com/ecs/).
