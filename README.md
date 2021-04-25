@@ -68,4 +68,4 @@ foo@bar:~$ ansible-playbook playbooks/aws_ecs_ansible_user_remove.yml
     * Fork a repo https://docs.github.com/en/github/getting-started-with-github/fork-a-repo
     * Create a feature branch
     * Merge changes back to original repo through PullRequest
-* Get in touch: #
+* Get in touch: #ansible_champions
