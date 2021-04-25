@@ -7,6 +7,7 @@
     cluster: "{{ aws_cluster.cluster.clusterArn }}"
     task_definition: "{{ aws_task_definition.taskdefinition.taskDefinitionArn }}"
     desired_count: 1
+    #enable_execute_command: true #not supported
     network_configuration:
       assign_public_ip: yes
       security_groups: "{{ aws_security_group.group_id }}"

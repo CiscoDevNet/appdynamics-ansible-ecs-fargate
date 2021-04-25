@@ -52,9 +52,9 @@
 - include_tasks: ecs_service.yml
   when: remove_ecs_service == true
 
-- name: Pause for 5 seconds to delete service
+- name: Pause for 10 seconds to delete service
   pause:
-    seconds: "5"
+    seconds: "10"
   when: remove_cluster == true 
 
 # remove cluster

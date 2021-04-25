@@ -9,13 +9,24 @@
       essential: false
       image: "{{ agent_image }}"
       memory: 128
+      command:
+      - cp
+      - -r
+      - /opt/appdynamics/.
+      - /tmp/appdynamics
       mountPoints:
-      - containerPath: /opt/appdynamics
+      - containerPath: /tmp/appdynamics
         sourceVolume: appd-agent-volume
+        readOnly: false
     - name: ansible-app
       essential: true
       image: "{{ application_image }}"
+      dependsOn:
+      - containerName: agent-init
+        condition: COMPLETE
       memory: 896
+      # linuxParameters:
+      #   initProcessEnabled: true
       portMappings:
       - containerPort: "{{ application_port }}"
         hostPort:      "{{ application_port }}"
@@ -43,17 +54,20 @@
         - name: "APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME_PREFIX"
           value: "{{ appd_node_name | default(appd_tier_name) }}"
         - name: "JAVA_OPTS"
-          value: " -javaagent:/opt/appdynamics/javaagent.jar "
+          value: " -javaagent:/tmp/appdynamics/javaagent.jar "
       secrets:
         # For variables stored in Secrets Manager
         - name: "APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY"
           valueFrom: "{{ aws_secret.secret.arn }}"
-      entryPoint:
+      command:
       - /bin/sh
       - -c
+      - ls /opt/appdynamics-agent > agent.log
       - java $JAVA_OPTS -jar /java-services.jar
-      volumesFrom:
-      - sourceContainer: agent-init
+      mountPoints:
+      - containerPath: /tmp/appdynamics
+        sourceVolume: appd-agent-volume
+        readOnly: false
     volumes:
     - name: appd-agent-volume
     cpu: 512
@@ -73,4 +87,5 @@
     aws_region: "{{ aws_region }}"
     arn: "{{ aws_task_definition_info.task_definition_arn }}"
     state: absent
-  when: remove_task_definition == true
+  when: (remove_task_definition == true) and (aws_task_definition_info is defined)
+  ignore_errors: True
