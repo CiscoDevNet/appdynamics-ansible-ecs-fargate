@@ -7,6 +7,9 @@
     - name: Include variables for the agent settings
       include_vars: vars/.local.agent.yml
 
+    - name: Include variables for the monitored application settings
+      include_vars: vars/.local.application.yml
+
     - name: Include cloud provider settings
       include_vars: vars/.local.cloud-provider.yml
 
@@ -20,7 +23,7 @@
       vars:
         create_secret: true
         remove_secret: false
-        aws_secret_name: test-secret-name
+        aws_secret_name: "{{ aws_controller_secret_name }}"
         aws_secret_value: "{{ controller_account_access_key }}"
 
     - include_role:
@@ -28,38 +31,38 @@
       vars:
         create_log_group: true
         remove_log_group: false
-        log_group_name: /ecs/test-cluster-ansible
+        log_group_name: "{{ aws_log_group_name }}"
 
     - include_role:
         name: identity
       vars:
         create_policies: true
         remove_policies: false
-        aws_iam_name: my-task
+        aws_iam_name: "{{ aws_task_definition_name }}"
 
     - include_role:
         name: networking
       vars:
         create_vpc: true
         remove_vpc: false
-        aws_vpc_name: "VPC for AppDynamics"
-        aws_vpc_cidr_block: 10.10.0.0/16
+        aws_vpc_name: "{{ aws_vpc_name_tag }}"
+        aws_vpc_cidr_block: "{{ aws_vpc_cidr_block_value }}"
         application_port: 8080
-        aws_networking_name: my-task
+        aws_networking_name: "{{ aws_task_definition_name }}"
 
     - include_role:
         name: aws_ecs
       vars:
         create_cluster: true
         remove_cluster: false
-        ecs_cluster_name: test-ansible-cluster
+        ecs_cluster_name: "{{ aws_ecs_cluster_name }}"
 
         create_task_definition: true
         remove_task_definition: false
-        task_definition_name: my-task
-        application_type: java # java | dotnet | node
-        application_image: sashaz/java-services:v5
-        agent_image: appdynamics/java-agent:20.8.0
+        task_definition_name: "{{ aws_task_definition_name }}"
+        application_type: "{{ application_type_value }}"
+        application_image: "{{ application_image_value }}"
+        agent_image: "{{ appd_agent_image }}"
 
         create_ecs_service: true
         remove_ecs_service: false

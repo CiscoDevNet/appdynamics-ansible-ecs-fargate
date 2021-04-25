@@ -3,6 +3,6 @@
 # Your AppDynamics controller host, port account and access key
 controller_host_name: "<appd-controller-url>"
 controller_port: "<port-number>"
-controller_account_name: "<account>" # Please add this to your Vault
-controller_account_access_key: "<access-key>" # Please add this to your Vault
+controller_account_name: "<account>" # e.g. customer1; Please add this to your Vault
+controller_account_access_key: "<access-key-value>" # Please add this to your Vault
 controller_ssl_enabled: "<true/false>"

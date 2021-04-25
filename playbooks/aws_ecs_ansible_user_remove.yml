@@ -7,6 +7,9 @@
     - name: Include variables for the agent settings
       include_vars: vars/.local.agent.yml
 
+    - name: Include variables for the monitored application settings
+      include_vars: vars/.local.application.yml
+
     - name: Include cloud provider settings
       include_vars: vars/.local.cloud-provider.yml
 
@@ -20,6 +23,6 @@
       vars:
         create_policies: false
         remove_policies: false
-        aws_iam_name: my-task
+        aws_iam_name: "{{ aws_task_definition_name }}"
         create_ecs_ansible_user: false
         remove_ecs_ansible_user: true

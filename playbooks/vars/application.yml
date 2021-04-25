@@ -1,0 +1,4 @@
+---
+# Application settings
+application_image_value: <application-image>
+application_type_value: java # java (the only one supported atm) | dotnet | node

@@ -4,3 +4,13 @@ cloud_provider: aws # azure | gcp | aws
 aws_access_key: <account-access-key>
 aws_secret_key: <account-secret-value>
 aws_region: <aws-region-name>
+
+aws_controller_secret_name: APPDYNAMICS_CONTROLLER_ACCESS_KEY
+
+aws_log_group_name: "/ecs/<log-group-name>"
+
+aws_task_definition_name: "<task-name>"
+aws_ecs_cluster_name: "<cluster-name>"
+
+aws_vpc_cidr_block_value: "ip-address/subnet-mask"
+aws_vpc_name_tag: "<vpc-name>"

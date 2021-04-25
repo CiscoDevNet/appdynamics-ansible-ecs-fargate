@@ -5,3 +5,4 @@ appd_application_name: "<app-name>"
 appd_tier_name: "<tier-name>"
 appd_node_name: "<node-name>"
 agent_log_level: "<log-level>" # info | trace | debug | warn | error | fatal | all | off
+appd_agent_image: "appdynamics/java-agent:<tag-value>"
